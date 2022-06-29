@@ -30,7 +30,6 @@ DATA = {
 # }
 def ingredients_view(request, dish):
     recipe = DATA[dish]
-    print(recipe)
     servings = int(request.GET.get("servings", 1))
     for count in recipe:
         recipe[count] *= servings

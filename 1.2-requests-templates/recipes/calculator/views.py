@@ -28,3 +28,10 @@ DATA = {
 #     'ингредиент2': количество2,
 #   }
 # }
+def ingredients_view(request, dish):
+    recipe = DATA[dish]
+    print(recipe)
+    servings = int(request.GET.get("servings", 1))
+    for count in recipe:
+        recipe[count] *= servings
+    return render(request, 'calculator/index.html', context={'recipe': recipe})

@@ -1,3 +1,4 @@
+from stations.views import bus_stations
 """pagination URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -18,4 +19,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('', include('stations.urls')),
+    path('bus_stations/', bus_stations, name='stations'),
 ]

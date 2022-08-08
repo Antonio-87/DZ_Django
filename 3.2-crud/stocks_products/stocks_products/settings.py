@@ -84,8 +84,6 @@ DATABASES = {
         'NAME': 'netology_stocks_products',
         'HOST': '127.0.0.1',
         'PORT': '5432',
-        'USER': 'postgres',
-        'PASSWORD': 'd14v12d11',
     }
 }
 

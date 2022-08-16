@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-
-from advertisements.models import Advertisement
+from rest_framework.exceptions import ValidationError
+from advertisements.models import Advertisement, Favourite
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -28,18 +28,29 @@ class AdvertisementSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Метод для создания"""
 
-        # Простановка значения поля создатель по-умолчанию.
-        # Текущий пользователь является создателем объявления
-        # изменить или переопределить его через API нельзя.
-        # обратите внимание на `context` – он выставляется автоматически
-        # через методы ViewSet.
-        # само поле при этом объявляется как `read_only=True`
         validated_data["creator"] = self.context["request"].user
         return super().create(validated_data)
 
     def validate(self, data):
         """Метод для валидации. Вызывается при создании и обновлении."""
 
-        # TODO: добавьте требуемую валидацию
+        user = self.context['request'].user
+        adv_count = len(Advertisement.objects.select_related('creator').filter(creator=user, status='OPEN'))
+        if 'status' in data.keys():
+            if 'OPEN' in data.values():
+                adv_count += 1
+            else:
+                adv_count -= 1
 
+        if adv_count > 10:
+            raise ValidationError('Колличество открытых объявлений превышено')
         return data
+
+
+class FavouriteSerializer(serializers.ModelSerializer):
+    """Serializer для избранного."""
+    
+    advertisement = AdvertisementSerializer()
+    class Meta:
+        model = Favourite
+        fields = ['user', 'advertisement']
